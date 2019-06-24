@@ -1,6 +1,6 @@
 # Discord Hack Week Submission
 
-| Idea Title        | TBD                                                    |
+| Idea Title        | Information                                            |
 |-------------------|--------------------------------------------------------|
 | Short Desc        | TBD                                                    |
 | Members Committed | Kabir Kwatra, Ivar Rydstrom, Raymond Wong, Aditya Dhir |
