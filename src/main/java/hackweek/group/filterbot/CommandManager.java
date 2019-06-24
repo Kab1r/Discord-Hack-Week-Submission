@@ -35,7 +35,7 @@ public class CommandManager {
 
     private Command getCommand(Message message) {
         String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
-        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length());
+        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
         if (messageWithoutPrefix.startsWith(Command.HELP.toString())) return Command.HELP;
         if (messageWithoutPrefix.startsWith(Command.ADD.toString())) return Command.ADD;
         if (messageWithoutPrefix.startsWith(Command.REMOVE.toString())) return Command.REMOVE;
