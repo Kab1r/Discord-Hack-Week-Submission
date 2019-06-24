@@ -61,10 +61,7 @@ public class CommandManager {
     }
 
     private void add(Message message) {
-      List<String> filter = new ArrayList<>();
-      String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length());
-      filter.add(0, messageWithoutPrefix);
-      database.addFilters(message.getGuild().getId(), filter);
+        // TODO
     }
 
     private void remove(Message message) {
