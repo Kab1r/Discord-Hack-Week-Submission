@@ -68,6 +68,8 @@ public class CommandManager {
         boolean removedObj = false;
         String temp = "`*IF YOU ARE SEEING THIS, THIS IS A BUG*`";
         List<String> filters = database.getFilters(message.getGuild().getID());
+
+
         for (int i = 0; i < filters.size(); i++) {
             if (!removedObj && message.getContentStripped().equalsIgnoreCase(filters.get(i)))
             {
