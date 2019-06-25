@@ -65,7 +65,23 @@ public class CommandManager {
     }
 
     private void remove(Message message) {
-        // TODO
+        boolean removedObj = false;
+        String temp = "`*IF YOU ARE SEEING THIS, THIS IS A BUG*`";
+        List<String> filters = database.getFilters(message.getGuild().getID());
+        for (int i = 0; i < filters.size(); i++) {
+            if (!removedObj && message.getContentStripped().equalsIgnoreCase(filters.get(i)))
+            {
+                temp = filters.remove(i);
+                i--;
+                removedObj = true;
+            }
+        }
+
+
+        if (removedObj)
+            message.getChannel().sendMessage("Successfully removed filter " + temp);
+        else
+            message.getChannel().sendMessage("Unable to find filter " + message.getContentStripped());
     }
 
     private void test(Message message) {
