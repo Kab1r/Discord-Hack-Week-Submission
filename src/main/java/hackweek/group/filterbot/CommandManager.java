@@ -65,14 +65,13 @@ public class CommandManager {
     }
 
     private void remove(Message message) {
-        boolean removedObj = false;
-        String temp = "`*IF YOU ARE SEEING THIS, THIS IS A BUG*`";
+        boolean removedObj = false; //set to true if an object is removed from the database
+        String temp = message.getContentStripped(); // value is changed to filter that was removed if (removedObj)
         List<String> filters = database.getFilters(message.getGuild().getID());
 
 
         for (int i = 0; i < filters.size(); i++) {
-            if (!removedObj && message.getContentStripped().equalsIgnoreCase(filters.get(i)))
-            {
+            if (!removedObj && message.getContentStripped().equalsIgnoreCase(filters.get(i))) {
                 temp = filters.remove(i);
                 i--;
                 removedObj = true;
@@ -80,10 +79,11 @@ public class CommandManager {
         }
 
 
-        if (removedObj)
+        if (removedObj) {
+            database.setFilters(message.getGuild().getID(), filters);
             message.getChannel().sendMessage("Successfully removed filter " + temp);
-        else
-            message.getChannel().sendMessage("Unable to find filter " + message.getContentStripped());
+        } else
+            message.getChannel().sendMessage("Unable to find filter " + temp);
     }
 
     private void test(Message message) {
