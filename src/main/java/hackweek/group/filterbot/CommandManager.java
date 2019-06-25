@@ -4,6 +4,8 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandManager {
     private Database database;
@@ -61,7 +63,12 @@ public class CommandManager {
     }
 
     private void add(Message message) {
-        // TODO
+      List<String> filter = new ArrayList<>();
+      String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
+      String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
+      filter.add(messageWithoutPrefix);
+      database.addFilters(message.getGuild().getId(), filter);
+      message.getChannel().sendMessage("Filter term: \"" + messageWithoutPrefix + "\" added").queue();
     }
 
     private void remove(Message message) {
