@@ -73,25 +73,23 @@ public class CommandManager {
 
     private void remove(Message message) {
         boolean removedObj = false; //set to true if an object is removed from the database
-        String prefixless = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim(); //(Thank you Ivar)
-        String temp = prefixless; // value is changed to filter that was removed if (removedObj)
-        List<String> filters = database.getFilters(message.getGuild().getID());
-
+        String prefixless = message.getContentStripped().toLowerCase().substring(database.getCommandPrefix(message.getGuild().getId()).length()).trim(); //(Thank you Ivar)
+        List<String> filters = database.getFilters(message.getGuild().getId());
 
         for (int i = 0; i < filters.size(); i++) {
-            if (!removedObj && prefixless.equalsIgnoreCase(filters.get(i))) {
-                temp = filters.remove(i);
-                i--;
+            if (prefixless.equalsIgnoreCase(filters.get(i))) {
+                prefixless = filters.remove(i);
                 removedObj = true;
+                break;
             }
         }
 
 
         if (removedObj) {
-            database.setFilters(message.getGuild().getID(), filters);
-            message.getChannel().sendMessage("Successfully removed filter \"" + temp + "\"");
+            database.setFilters(message.getGuild().getId(), filters);
+            message.getChannel().sendMessage("Successfully removed filter \"" + prefixless + "\"").queue();
         } else
-            message.getChannel().sendMessage("Unable to find filter \"" + temp + "\"");
+            message.getChannel().sendMessage("Unable to find filter \"" + prefixless + "\"").queue();
     }
 
     private void test(Message message) {
