@@ -80,8 +80,8 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
     @Suppress("UNCHECKED_CAST")
     fun addFilters(guildID: String, filters: MutableList<String>) {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data ?: mutableMapOf()
-        ((data["filters"] as MutableList<String>?) ?: mutableListOf()).addAll(filters)
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: mutableMapOf(Pair("filters", mutableListOf<String>()))
+        (data["filters"] as MutableList<String>).addAll(filters)
         val result: ApiFuture<WriteResult> = docRef.set(data)
         result.get()
     }
