@@ -50,4 +50,9 @@ jar {
                 'Main-Class': 'hackweek.group.filterbot.MainKt'
         )
     }
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
