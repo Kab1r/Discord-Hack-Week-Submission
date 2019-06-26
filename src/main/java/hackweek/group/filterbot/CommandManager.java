@@ -72,7 +72,24 @@ public class CommandManager {
     }
 
     private void remove(Message message) {
-        // TODO
+        boolean removedObj = false; //set to true if an object is removed from the database
+        String prefixless = message.getContentStripped().toLowerCase().substring(database.getCommandPrefix(message.getGuild().getId()).length()).trim(); //(Thank you Ivar)
+        List<String> filters = database.getFilters(message.getGuild().getId());
+
+        for (int i = 0; i < filters.size(); i++) {
+            if (prefixless.equalsIgnoreCase(filters.get(i))) {
+                prefixless = filters.remove(i);
+                removedObj = true;
+                break;
+            }
+        }
+
+
+        if (removedObj) {
+            database.setFilters(message.getGuild().getId(), filters);
+            message.getChannel().sendMessage("Successfully removed filter \"" + prefixless + "\"").queue();
+        } else
+            message.getChannel().sendMessage("Unable to find filter \"" + prefixless + "\"").queue();
     }
 
     private void test(Message message) {
