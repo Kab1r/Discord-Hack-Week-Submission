@@ -30,7 +30,7 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
      * */
     fun getCommandPrefix(guildID: String): String {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: return DEFAULT_COMMAND_PREFIX
         return data["commandPrefix"] as String? ?: DEFAULT_COMMAND_PREFIX
         // default command prefix if firestore returns null
     }
