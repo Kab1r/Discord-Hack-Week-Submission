@@ -57,7 +57,7 @@ public class CommandManager {
                         .addField("Add", "Adds filter for current server", false)
                         .addField("Remove", "Removes filter for current server", false)
                         .addField("Test", "Provides list of possible filters given an Image or Video", false)
-                        .setFooter("Help Command", "") // TODO add footer image url
+                        .setFooter("Help Command", "https://i.imgur.com/HXQSvGu.jpeg")
                         .build()
         ).queue();
     }
