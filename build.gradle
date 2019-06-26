@@ -43,3 +43,11 @@ compileTestKotlin {
 application {
     mainClassName = 'hackweek.group.filterbot.MainKt'
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'hackweek.group.filterbot.MainKt'
+        )
+    }
+}
