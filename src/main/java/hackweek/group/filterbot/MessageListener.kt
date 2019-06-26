@@ -7,8 +7,9 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter
 
 class MessageListener(gcpAuth: GoogleCredentials, gcpProjectID: String) : ListenerAdapter() {
 
-    var database = Database(gcpAuth, gcpProjectID)
-    var commandManager = CommandManager(database)
+    private val database = Database(gcpAuth, gcpProjectID)
+    private val commandManager = CommandManager(database)
+    private val imageScanner = ImageScanner(database, gcpAuth)
 
     override fun onMessageReceived(event: MessageReceivedEvent?) {
         super.onMessageReceived(event)
@@ -20,10 +21,10 @@ class MessageListener(gcpAuth: GoogleCredentials, gcpProjectID: String) : Listen
         } else {
 
             if (event.message.hasImage()) {
-                // TODO
+                imageScanner.handle(event.message)
             }
 
-            if (event.message.hasImage()) {
+            if (event.message.hasVideo()) {
                 // TODO
             }
 
