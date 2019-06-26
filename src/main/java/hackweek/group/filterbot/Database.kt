@@ -16,6 +16,7 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
     companion object {
         const val DEFAULT_COMMAND_PREFIX = "f!"
     }
+
     // Firestore Database
     private val db: Firestore = FirestoreOptions.getDefaultInstance()
         .toBuilder()
@@ -30,7 +31,7 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
      * */
     fun getCommandPrefix(guildID: String): String {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: return DEFAULT_COMMAND_PREFIX
         return data["commandPrefix"] as String? ?: DEFAULT_COMMAND_PREFIX
         // default command prefix if firestore returns null
     }
@@ -55,8 +56,8 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
     @Suppress("UNCHECKED_CAST")
     fun getFilters(guildID: String): List<String> {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
-        return data["filters"] as List<String>
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: mutableMapOf()
+        return (data["filters"] ?: listOf<String>()) as List<String>
     }
 
     /**
@@ -66,7 +67,7 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
      */
     fun setFilters(guildID: String, filters: MutableList<String>) {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: mutableMapOf()
         data["filters"] = filters
         val result: ApiFuture<WriteResult> = docRef.set(data)
         result.get()
@@ -80,8 +81,9 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
     @Suppress("UNCHECKED_CAST")
     fun addFilters(guildID: String, filters: MutableList<String>) {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
-        ((data["filters"] as MutableList<String>?) ?: mutableListOf()).addAll(filters)
+        val data: MutableMap<String, Any> =
+            docRef.get().get().data ?: mutableMapOf(Pair("filters", mutableListOf<String>())) as MutableMap<String, Any>
+        (data["filters"] as MutableList<String>).addAll(filters)
         val result: ApiFuture<WriteResult> = docRef.set(data)
         result.get()
     }

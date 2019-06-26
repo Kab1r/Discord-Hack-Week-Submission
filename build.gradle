@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
     // Logging for JDA
@@ -24,7 +24,7 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-api:2.11.2"
 
     // JDA
-    implementation "net.dv8tion:JDA:3.8.3_463"
+    compile "net.dv8tion:JDA:3.8.3_463"
 
     // Google Cloud Vision
     compile "com.google.cloud:google-cloud-vision:1.79.0"
@@ -42,4 +42,22 @@ compileTestKotlin {
 
 application {
     mainClassName = 'hackweek.group.filterbot.MainKt'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'hackweek.group.filterbot.MainKt'
+        )
+    }
+    from {
+        configurations
+                .compile
+                .findAll {
+                    !it.name.endsWith('pom')
+                }
+                .collect {
+                    it.isDirectory() ? it : zipTree(it)
+                }
+    }
 }

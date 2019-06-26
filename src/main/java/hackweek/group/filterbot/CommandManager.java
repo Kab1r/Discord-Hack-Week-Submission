@@ -4,7 +4,8 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.List;
 
 public class CommandManager {
@@ -62,28 +63,39 @@ public class CommandManager {
                         .addField("Remove", "Removes filter for current server", false)
                         .addField("Test", "Provides list of possible filters given an Image or Video", false)
                         .addField("List", "Returns the list of filters added to the current server", false)
-                        .setFooter("Help Command", "") // TODO add footer image url
+                        .setFooter("Help Command", "https://i.imgur.com/HXQSvGu.jpeg")
                         .build()
         ).queue();
     }
 
     private void add(Message message) {
-      List<String> filter = new ArrayList<>();
-      String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
-      String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
-      filter.add(messageWithoutPrefix);
-      database.addFilters(message.getGuild().getId(), filter);
-      message.getChannel().sendMessage("Filter term: \"" + messageWithoutPrefix + "\" added").queue();
+        String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
+        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
+        String filter = messageWithoutPrefix.substring("add".length()).trim();
+        if (filter.isEmpty()) {
+            message.getChannel().sendMessage("No filter was provided").queue();
+            return;
+        }
+        database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
+        message.getChannel().sendMessage("Filter term: \"" + messageWithoutPrefix + "\" added").queue();
     }
 
     private void remove(Message message) {
         boolean removedObj = false; //set to true if an object is removed from the database
-        String prefixless = message.getContentStripped().toLowerCase().substring(database.getCommandPrefix(message.getGuild().getId()).length()).trim(); //(Thank you Ivar)
+        String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
+        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
+        String filter = messageWithoutPrefix.substring("remove".length()).trim();
+
+        if (filter.isEmpty()) {
+            message.getChannel().sendMessage("No filter was provided").queue();
+            return;
+        }
+
         List<String> filters = database.getFilters(message.getGuild().getId());
 
         for (int i = 0; i < filters.size(); i++) {
-            if (prefixless.equalsIgnoreCase(filters.get(i))) {
-                prefixless = filters.remove(i);
+            if (filter.equalsIgnoreCase(filters.get(i))) {
+                filter = filters.remove(i);
                 removedObj = true;
                 break;
             }
@@ -92,9 +104,9 @@ public class CommandManager {
 
         if (removedObj) {
             database.setFilters(message.getGuild().getId(), filters);
-            message.getChannel().sendMessage("Successfully removed filter \"" + prefixless + "\"").queue();
+            message.getChannel().sendMessage("Successfully removed filter \"" + filter + "\"").queue();
         } else
-            message.getChannel().sendMessage("Unable to find filter \"" + prefixless + "\"").queue();
+            message.getChannel().sendMessage("Unable to find filter \"" + filter + "\"").queue();
     }
 
     private void test(Message message) {
