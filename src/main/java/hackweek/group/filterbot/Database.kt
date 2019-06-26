@@ -6,6 +6,7 @@ import com.google.cloud.firestore.DocumentReference
 import com.google.cloud.firestore.Firestore
 import com.google.cloud.firestore.FirestoreOptions
 import com.google.cloud.firestore.WriteResult
+import net.dv8tion.jda.core.entities.Guild
 
 /**
  * Firestore based Database
@@ -66,7 +67,7 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
      */
     fun setFilters(guildID: String, filters: MutableList<String>) {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: mutableMapOf()
         data["filters"] = filters
         val result: ApiFuture<WriteResult> = docRef.set(data)
         result.get()
@@ -80,7 +81,7 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
     @Suppress("UNCHECKED_CAST")
     fun addFilters(guildID: String, filters: MutableList<String>) {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
-        val data: MutableMap<String, Any> = docRef.get().get().data!!
+        val data: MutableMap<String, Any> = docRef.get().get().data ?: mutableMapOf()
         ((data["filters"] as MutableList<String>?) ?: mutableListOf()).addAll(filters)
         val result: ApiFuture<WriteResult> = docRef.set(data)
         result.get()
