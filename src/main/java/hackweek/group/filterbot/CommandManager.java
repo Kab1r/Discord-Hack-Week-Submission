@@ -72,7 +72,7 @@ public class CommandManager {
             return;
         }
         database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
-        message.getChannel().sendMessage("Filter term: \"" + messageWithoutPrefix + "\" added").queue();
+        message.getChannel().sendMessage("Filter term: \"" + filter + "\" added").queue();
     }
 
     private void remove(Message message) {
