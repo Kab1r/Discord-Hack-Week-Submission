@@ -82,7 +82,8 @@ class Database(gcpAuth: GoogleCredentials, gcpProjectId: String) {
     fun addFilters(guildID: String, filters: MutableList<String>) {
         val docRef: DocumentReference = db.collection("guilds").document(guildID)
         val data: MutableMap<String, Any> =
-            docRef.get().get().data ?: mutableMapOf(Pair("filters", mutableListOf<String>())) as MutableMap<String, Any>
+            docRef.get().get().data ?: mutableMapOf<String, MutableList<String>>() as MutableMap<String, Any>
+        if (data["filters"] == null) data["filters"] = mutableListOf<String>()
         (data["filters"] as MutableList<String>).addAll(filters)
         val result: ApiFuture<WriteResult> = docRef.set(data)
         result.get()
