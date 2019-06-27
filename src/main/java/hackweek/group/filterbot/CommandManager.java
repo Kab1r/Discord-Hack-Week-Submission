@@ -46,7 +46,7 @@ public class CommandManager {
         if (messageWithoutPrefix.startsWith(Command.ADD.toString())) return Command.ADD;
         if (messageWithoutPrefix.startsWith(Command.REMOVE.toString())) return Command.REMOVE;
         if (messageWithoutPrefix.startsWith(Command.TEST.toString())) return Command.TEST;
-        if (messageWithoutPrefix.startsWith(Command.LIST.toString())) return Command.LIST;
+        if (messageWithoutPrefix.startsWith(Command.LIST.toString().toLowerCase())) return Command.LIST;
 
         throw new IllegalStateException("Message: " + messageWithoutPrefix);
 
@@ -128,10 +128,10 @@ public class CommandManager {
     }
 
     private enum Command {
-        HELP,   // Informational Help Command
-        ADD,    // Add new Filter
+        HELP, // Informational Help Command
+        ADD,  // Add new Filter
         REMOVE, // Remove existing Filter
-        TEST,   // Test image or video for possible filters
-        LIST,   //Lists filters for the given server
+        TEST, // Test image or video for possible filters
+        LIST, //Lists filters for the given server
     }
 }
