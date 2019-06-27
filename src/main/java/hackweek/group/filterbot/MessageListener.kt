@@ -1,6 +1,7 @@
 package hackweek.group.filterbot
 
 import com.google.auth.oauth2.GoogleCredentials
+import net.dv8tion.jda.core.entities.EmbedType
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
@@ -25,7 +26,7 @@ class MessageListener(gcpAuth: GoogleCredentials, gcpProjectID: String) : Listen
             }
 
             if (event.message.hasVideo()) {
-                // TODO
+
             }
 
             if (event.message.hasText()) {
@@ -57,8 +58,15 @@ fun Message.hasImage(): Boolean {
 }
 
 fun Message.hasVideo(): Boolean {
-    // TODO
-    return false
+    if (this.embeds.isNullOrEmpty())
+        return false
+    else {
+        this.embeds.forEach {
+            if (it.type == EmbedType.VIDEO)
+                return true
+        }
+        return false
+    }
 }
 
 fun Message.hasText(): Boolean {
