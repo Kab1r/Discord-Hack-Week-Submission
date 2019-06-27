@@ -42,10 +42,10 @@ public class CommandManager {
     private Command getCommand(Message message) {
         String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
         String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
-        if (messageWithoutPrefix.startsWith(Command.HELP.toString())) return Command.HELP;
-        if (messageWithoutPrefix.startsWith(Command.ADD.toString())) return Command.ADD;
-        if (messageWithoutPrefix.startsWith(Command.REMOVE.toString())) return Command.REMOVE;
-        if (messageWithoutPrefix.startsWith(Command.TEST.toString())) return Command.TEST;
+        if (messageWithoutPrefix.startsWith(Command.HELP.toString().toLowerCase())) return Command.HELP;
+        if (messageWithoutPrefix.startsWith(Command.ADD.toString().toLowerCase())) return Command.ADD;
+        if (messageWithoutPrefix.startsWith(Command.REMOVE.toString().toLowerCase())) return Command.REMOVE;
+        if (messageWithoutPrefix.startsWith(Command.TEST.toString().toLowerCase())) return Command.TEST;
         if (messageWithoutPrefix.startsWith(Command.LIST.toString().toLowerCase())) return Command.LIST;
 
         throw new IllegalStateException("Message: " + messageWithoutPrefix);
