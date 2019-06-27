@@ -129,7 +129,7 @@ public class CommandManager {
 
     private enum Command {
         HELP, // Informational Help Command
-        ADD,  // Add new Filter
+        ADD, // Add new Filter
         REMOVE, // Remove existing Filter
         TEST, // Test image or video for possible filters
         LIST, //Lists filters for the given server
