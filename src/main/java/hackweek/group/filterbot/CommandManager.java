@@ -31,6 +31,9 @@ public class CommandManager {
             case TEST:
                 test(event.getMessage());
                 break;
+            case LIST:
+                list(event.getMessage());
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + command);
         }
@@ -43,6 +46,7 @@ public class CommandManager {
         if (messageWithoutPrefix.startsWith(Command.ADD.toString().toLowerCase())) return Command.ADD;
         if (messageWithoutPrefix.startsWith(Command.REMOVE.toString().toLowerCase())) return Command.REMOVE;
         if (messageWithoutPrefix.startsWith(Command.TEST.toString().toLowerCase())) return Command.TEST;
+        if (messageWithoutPrefix.startsWith(Command.LIST.toString().toLowerCase())) return Command.LIST;
 
         throw new IllegalStateException("Message: " + messageWithoutPrefix);
 
@@ -58,6 +62,7 @@ public class CommandManager {
                         .addField("Add", "Adds filter for current server", false)
                         .addField("Remove", "Removes filter for current server", false)
                         .addField("Test", "Provides list of possible filters given an Image or Video", false)
+                        .addField("List", "Returns the list of filters added to the current server", false)
                         .setFooter("Help Command", "https://i.imgur.com/HXQSvGu.jpeg")
                         .build()
         ).queue();
@@ -108,10 +113,25 @@ public class CommandManager {
         // TODO
     }
 
+    private void list(Message message) {
+        if (database.getFilters(message.getGuild().getId()).isEmpty()) {
+            message.getChannel().sendMessage("There are no filters added in this server, use f!add [term] to add a filter.").queue();
+            return;
+        }    //case: if no filters are added for the given server
+
+        String filters = "";
+        for (String tag : database.getFilters(message.getGuild().getId()))      //loop: building a string from the list of filters in the given server
+            filters += tag + ", ";
+
+        filters = filters.substring(0, filters.lastIndexOf(","));           //removing the last "," in the "filter" string
+        message.getChannel().sendMessage("Filters in " + message.getGuild().getName() + ": " + filters).queue(); //sends message
+    }
+
     private enum Command {
         HELP, // Informational Help Command
         ADD, // Add new Filter
         REMOVE, // Remove existing Filter
         TEST, // Test image or video for possible filters
+        LIST, //Lists filters for the given server
     }
 }
