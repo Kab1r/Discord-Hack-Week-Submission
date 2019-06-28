@@ -51,6 +51,7 @@ public class CommandManager {
         if (messageWithoutPrefix.startsWith(Command.TEST.toString().toLowerCase())) return Command.TEST;
         if (messageWithoutPrefix.startsWith(Command.LIST.toString().toLowerCase())) return Command.LIST;
         if (messageWithoutPrefix.startsWith(Command.SETPREFIX.toString().toLowerCase())) return Command.SETPREFIX;
+
         throw new IllegalStateException("Message: " + messageWithoutPrefix);
 
     }
@@ -138,6 +139,13 @@ public class CommandManager {
         message.getChannel().sendMessage("Prefix successfully set to **" + newPrefix + "** (applies server-wide).").queue();
     }
 
+    private void setPrefix(Message message) {
+        String cmdPrefix = database.getCommandPrefix(message.getGuild().getId());
+        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(cmdPrefix.length()).trim();
+        String newPrefix = messageWithoutPrefix.substring("setPrefix".length()).trim();
+        database.setCommandPrefix(message.getGuild().getId(), newPrefix);
+        message.getChannel().sendMessage("Prefix successfully set to " + newPrefix + "(applies server-wide).").queue();
+    }
     private enum Command {
         HELP, // Informational Help Command
         ADD, // Add new Filter
