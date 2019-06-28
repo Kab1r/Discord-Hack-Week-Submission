@@ -34,6 +34,9 @@ public class CommandManager {
             case LIST:
                 list(event.getMessage());
                 break;
+            case SETPREFIX:
+                setPrefix(event.getMessage());
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + command);
         }
@@ -47,6 +50,7 @@ public class CommandManager {
         if (messageWithoutPrefix.startsWith(Command.REMOVE.toString().toLowerCase())) return Command.REMOVE;
         if (messageWithoutPrefix.startsWith(Command.TEST.toString().toLowerCase())) return Command.TEST;
         if (messageWithoutPrefix.startsWith(Command.LIST.toString().toLowerCase())) return Command.LIST;
+        if (messageWithoutPrefix.startsWith(Command.SETPREFIX.toString().toLowerCase())) return Command.SETPREFIX;
 
         throw new IllegalStateException("Message: " + messageWithoutPrefix);
 
@@ -63,6 +67,7 @@ public class CommandManager {
                         .addField("Remove", "Removes filter for current server", false)
                         .addField("Test", "Provides list of possible filters given an Image or Video", false)
                         .addField("List", "Returns the list of filters added to the current server", false)
+                        .addField("SetPrefix", "Sets the command prefix for the bot (applies server-wide)", false)
                         .setFooter("Help Command", "https://i.imgur.com/HXQSvGu.jpeg")
                         .build()
         ).queue();
@@ -127,11 +132,19 @@ public class CommandManager {
         message.getChannel().sendMessage("Filters in " + message.getGuild().getName() + ": " + filters).queue(); //sends message
     }
 
+    private void setPrefix(Message message) {
+        String cmdPrefix = database.getCommandPrefix(message.getGuild().getId());
+        String newPrefix = message.getContentStripped().toLowerCase().substring(cmdPrefix.length()).trim();
+        database.setCommandPrefix(message.getGuild().getId(), newPrefix);
+        message.getChannel().sendMessage("Prefix successfully set to " + newPrefix + "(applies server-wide).").queue();
+    }
+
     private enum Command {
         HELP, // Informational Help Command
         ADD, // Add new Filter
         REMOVE, // Remove existing Filter
         TEST, // Test image or video for possible filters
         LIST, //Lists filters for the given server
+        SETPREFIX, // Sets command prefix for the server
     }
 }
