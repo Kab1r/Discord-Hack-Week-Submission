@@ -137,7 +137,6 @@ public class CommandManager {
         database.setCommandPrefix(message.getGuild().getId(), newPrefix);
         message.getChannel().sendMessage("Prefix successfully set to " + newPrefix + "(applies server-wide).").queue();
     }
-
     private enum Command {
         HELP, // Informational Help Command
         ADD, // Add new Filter
