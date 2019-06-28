@@ -71,7 +71,7 @@ public class CommandManager {
                         .build()
         ).queue();
     }
-    
+
     private void add(Message message) {
         String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
         String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
