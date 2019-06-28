@@ -59,8 +59,8 @@ public class CommandManager {
     private void help(MessageChannel channel) {
         channel.sendMessage(
                 new EmbedBuilder()
-                        .setAuthor("FilterBot")
-                        .setTitle("Help")
+                        .setAuthor("FilterBot", null, "https://cdn.discordapp.com/avatars/593348457306259469/10d5a0b8b4bab79f7e878b03203d919c.png?size=128") // for the "iconUrl" switch "128" to "2048" if needed
+                        .setTitle("Filterbot commands")
                         .setDescription("FilterBot filters specified words, images, and videos")
                         .addField("Help", "Lists commands and description", false)
                         .addField("Add", "Adds filter for current server", false)
@@ -82,7 +82,7 @@ public class CommandManager {
             return;
         }
         database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
-        message.getChannel().sendMessage("Filter term: \"" + filter + "\" added").queue();
+        message.getChannel().sendMessage("Filter term: **\"" + filter + "\"** added").queue();
     }
 
     private void remove(Message message) {
@@ -109,9 +109,9 @@ public class CommandManager {
 
         if (removedObj) {
             database.setFilters(message.getGuild().getId(), filters);
-            message.getChannel().sendMessage("Successfully removed filter \"" + filter + "\"").queue();
+            message.getChannel().sendMessage("Successfully removed filter **\"" + filter + "\"**").queue();
         } else
-            message.getChannel().sendMessage("Unable to find filter \"" + filter + "\"").queue();
+            message.getChannel().sendMessage("Unable to find filter **\"" + filter + "\"**").queue();
     }
 
     private void test(Message message) {
@@ -120,7 +120,7 @@ public class CommandManager {
 
     private void list(Message message) {
         if (database.getFilters(message.getGuild().getId()).isEmpty()) {
-            message.getChannel().sendMessage("There are no filters added in this server, use f!add [term] to add a filter.").queue();
+            message.getChannel().sendMessage("There are no filters added in this server, use **f!add [term]** to add a filter.").queue();
             return;
         }    //case: if no filters are added for the given server
 
@@ -129,14 +129,14 @@ public class CommandManager {
             filters += tag + ", ";
 
         filters = filters.substring(0, filters.lastIndexOf(","));           //removing the last "," in the "filter" string
-        message.getChannel().sendMessage("Filters in " + message.getGuild().getName() + ": " + filters).queue(); //sends message
+        message.getChannel().sendMessage("Filters in *" + message.getGuild().getName() + "*: " + filters).queue(); //sends message
     }
 
     private void setPrefix(Message message) {
         String cmdPrefix = database.getCommandPrefix(message.getGuild().getId());
         String newPrefix = message.getContentStripped().toLowerCase().substring(cmdPrefix.length()).trim();
         database.setCommandPrefix(message.getGuild().getId(), newPrefix);
-        message.getChannel().sendMessage("Prefix successfully set to " + newPrefix + "(applies server-wide).").queue();
+        message.getChannel().sendMessage("Prefix successfully set to **" + newPrefix + "** (applies server-wide).").queue();
     }
 
     private enum Command {
