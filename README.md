@@ -1,4 +1,4 @@
-# Discord Hack Week Submission
+# Discord Hack Week Submission [![CircleCI](https://circleci.com/gh/KabirKwatra/Discord-Hack-Week-Submission.svg?style=svg)](https://circleci.com/gh/KabirKwatra/Discord-Hack-Week-Submission)
 
 | Idea Title        | Image Filter Bot					                                              |
 |-------------------|-------------------------------------------------------------------------|

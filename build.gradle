@@ -31,6 +31,9 @@ dependencies {
 
     // Google Cloud Firestore
     compile "com.google.cloud:google-cloud-firestore:1.9.0"
+
+    // Google Cloud Video Intelligence
+    compile 'com.google.cloud:google-cloud-video-intelligence:0.97.0-beta'
 }
 
 compileKotlin {
