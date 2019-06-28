@@ -59,7 +59,7 @@ public class CommandManager {
         channel.sendMessage(
                 new EmbedBuilder()
                         .setAuthor("FilterBot", null, "https://cdn.discordapp.com/avatars/593348457306259469/10d5a0b8b4bab79f7e878b03203d919c.png?size=128") // for the "iconUrl" switch "128" to "2048" if needed
-                        .setTitle("Filterbot commands")
+                        .setTitle("__Filterbot commands__")
                         .setDescription("FilterBot filters specified words, images, and videos")
                         .addField("Help", "Lists commands and description", false)
                         .addField("Add", "Adds filter for current server", false)
