@@ -79,9 +79,19 @@ public class CommandManager {
         if (filter.isEmpty()) {
             message.getChannel().sendMessage("No filter was provided").queue();
             return;
+        } else if (filter.indexOf(",") == -1) {
+            database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
+            message.getChannel().sendMessage("Filter term: **\"" + filter + "\"** added").queue();
+        } else {
+            String output = "\"" + filter.substring(0, filter.indexOf(",")) + "\" ";
+            filter = filter.substring(filter.indexOf(",") + 1);
+            while (filter.indexOf(",") != -1) {
+                database.addFilters(message.getGuild().getId(), Collections.singletonList(filter.substring(0, filter.indexOf(","))));
+                output += ", \"" + filter.substring(0, filter.indexOf(",")) + "\"";
+                filter = filter.substring(filter.indexOf(",") + 1);
+            }
+            message.getChannel().sendMessage("Filter terms: **" + output + "** added").queue();
         }
-        database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
-        message.getChannel().sendMessage("Filter term: **\"" + filter + "\"** added").queue();
     }
 
     private void remove(Message message) {
