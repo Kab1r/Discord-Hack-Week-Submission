@@ -1,7 +1,5 @@
 package hackweek.group.filterbot
 
-import com.google.api.gax.core.FixedCredentialsProvider
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.vision.v1.*
 import com.google.protobuf.ByteString
 import net.dv8tion.jda.core.entities.Message
@@ -12,16 +10,9 @@ import java.io.File
  * @param database Database of filters
  */
 class ImageScanner(
-    private val database: Database,
-    gcpAuth: GoogleCredentials
+    private val database: Database
 ) : Scanner<Message> {
-    private val visionClient = ImageAnnotatorClient.create(
-        ImageAnnotatorSettings.newBuilder()
-            .setCredentialsProvider(
-                FixedCredentialsProvider
-                    .create(gcpAuth)
-            ).build()!!
-    )
+    private val visionClient = ImageAnnotatorClient.create()
 
     /**
      * Handles message by scanning message,

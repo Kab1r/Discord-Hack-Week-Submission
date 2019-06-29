@@ -34,12 +34,19 @@ public class CommandManager {
             case LIST:
                 list(event.getMessage());
                 break;
-            case SETPREFIX:
+            case SET_PREFIX:
                 setPrefix(event.getMessage());
                 break;
+            case INVALID:
             default:
-                throw new IllegalStateException("Unexpected value: " + command);
+                invalid(event.getMessage());
         }
+    }
+
+    private void invalid(Message message) {
+        String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
+        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
+        message.getChannel().sendMessage("\"" + messageWithoutPrefix + "\"" + " is not a valid command").queue();
     }
 
     private Command getCommand(Message message) {
@@ -50,8 +57,9 @@ public class CommandManager {
         if (messageWithoutPrefix.startsWith(Command.REMOVE.toString().toLowerCase())) return Command.REMOVE;
         if (messageWithoutPrefix.startsWith(Command.TEST.toString().toLowerCase())) return Command.TEST;
         if (messageWithoutPrefix.startsWith(Command.LIST.toString().toLowerCase())) return Command.LIST;
-        if (messageWithoutPrefix.startsWith(Command.SETPREFIX.toString().toLowerCase())) return Command.SETPREFIX;
-        throw new IllegalStateException("Message: " + messageWithoutPrefix);
+        if (messageWithoutPrefix.startsWith("setPrefix".toLowerCase())) return Command.SET_PREFIX;
+
+        return Command.INVALID;
 
     }
 
@@ -78,14 +86,13 @@ public class CommandManager {
         String filter = messageWithoutPrefix.substring("add".length()).trim();
         if (filter.isEmpty()) {
             message.getChannel().sendMessage("No filter was provided").queue();
-            return;
-        } else if (filter.indexOf(",") == -1) {
+        } else if (filter.contains(",")) {
             database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
             message.getChannel().sendMessage("Filter term: **\"" + filter + "\"** added").queue();
         } else {
             String output = "\"" + filter.substring(0, filter.indexOf(",")) + "\" ";
             filter = filter.substring(filter.indexOf(",") + 1);
-            while (filter.indexOf(",") != -1) {
+            while (filter.contains(",")) {
                 database.addFilters(message.getGuild().getId(), Collections.singletonList(filter.substring(0, filter.indexOf(","))));
                 output += ", \"" + filter.substring(0, filter.indexOf(",")) + "\"";
                 filter = filter.substring(filter.indexOf(",") + 1);
@@ -95,7 +102,7 @@ public class CommandManager {
     }
 
     private void remove(Message message) {
-        boolean removedObj = false; //set to true if an object is removed from the database
+        boolean removedObj = false; // set to true if an object is removed from the database
         String commandPrefix = database.getCommandPrefix(message.getGuild().getId());
         String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(commandPrefix.length()).trim();
         String filter = messageWithoutPrefix.substring("remove".length()).trim();
@@ -128,24 +135,33 @@ public class CommandManager {
     }
 
     private void list(Message message) {
-        if (database.getFilters(message.getGuild().getId()).isEmpty()) {
-            message.getChannel().sendMessage("There are no filters added in this server, use **f!add [term]** to add a filter.").queue();
+        List<String> filterList = database.getFilters(message.getGuild().getId());
+        // no filters are present
+        if (filterList.isEmpty()) {
+            message.getChannel().sendMessage("No filters have been added for this server, use **f!add [term]** to add a filter.").queue();
             return;
-        }    //case: if no filters are added for the given server
+        }
 
-        String filters = "";
-        for (String tag : database.getFilters(message.getGuild().getId()))      //loop: building a string from the list of filters in the given server
-            filters += tag + ", ";
+        StringBuilder filters = new StringBuilder();
+        // loop: building a StringBuilder from the filterList
+        for (String tag : filterList)
+            filters.append(tag).append(", ");
 
-        filters = filters.substring(0, filters.lastIndexOf(","));           //removing the last "," in the "filter" string
-        message.getChannel().sendMessage("Filters in *" + message.getGuild().getName() + "*: " + filters).queue(); //sends message
+        // removing the last "," in the StringBuilder
+        filters.deleteCharAt(filters.length() - 1);
+        // sends message with list of filters
+        message.getChannel().sendMessage("Filters in " + message.getGuild().getName() + ": " + filters).queue();
     }
-
     private void setPrefix(Message message) {
         String cmdPrefix = database.getCommandPrefix(message.getGuild().getId());
-        String newPrefix = message.getContentStripped().toLowerCase().substring(cmdPrefix.length()).trim();
-        database.setCommandPrefix(message.getGuild().getId(), newPrefix);
-        message.getChannel().sendMessage("Prefix successfully set to **" + newPrefix + "** (applies server-wide).").queue();
+        String messageWithoutPrefix = message.getContentStripped().toLowerCase().substring(cmdPrefix.length()).trim();
+        String newPrefix = messageWithoutPrefix.substring("setPrefix".length()).trim();
+        if (!newPrefix.isEmpty()) {
+            database.setCommandPrefix(message.getGuild().getId(), newPrefix);
+            message.getChannel().sendMessage("Prefix successfully set to " + newPrefix + "(applies server-wide).").queue();
+        } else {
+            message.getChannel().sendMessage("Prefix cannot be blank").queue();
+        }
     }
 
     private enum Command {
@@ -153,7 +169,8 @@ public class CommandManager {
         ADD, // Add new Filter
         REMOVE, // Remove existing Filter
         TEST, // Test image or video for possible filters
-        LIST, //Lists filters for the given server
-        SETPREFIX, // Sets command prefix for the server
+        LIST, // Lists filters for the given server
+        SET_PREFIX, // Sets command prefix for the server
+        INVALID // Invalid command
     }
 }
