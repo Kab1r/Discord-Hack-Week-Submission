@@ -86,7 +86,7 @@ public class CommandManager {
         String filter = messageWithoutPrefix.substring("add".length()).trim();
         if (filter.isEmpty()) {
             message.getChannel().sendMessage("No filter was provided").queue();
-        } else if (filter.contains(",")) {
+        } else if (!filter.contains(",")) {
             database.addFilters(message.getGuild().getId(), Collections.singletonList(filter));
             message.getChannel().sendMessage("Filter term: **\"" + filter + "\"** added").queue();
         } else {
